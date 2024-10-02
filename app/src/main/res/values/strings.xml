@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TaskMaster</string>
     <string name="back_button">Back</string>
+    <string name="app_slogan" translatable="false">Gestiona tu Vida</string>
 </resources>
