@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.unicauca.taskmaster.R
+import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 
 
 @Composable

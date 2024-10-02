@@ -50,15 +50,15 @@ fun TaskItem(
     Row(
         modifier = modifier, verticalAlignment = Alignment.CenterVertically
     ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
         Text(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 16.dp),
             text = taskName
-        )
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange
         )
         IconButton(onClick = onClose) {
             Icon(Icons.Filled.Close, contentDescription = "Close")
