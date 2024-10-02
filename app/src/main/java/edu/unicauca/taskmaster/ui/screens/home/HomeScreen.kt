@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,11 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.unicauca.taskmaster.R
 import edu.unicauca.taskmaster.data.model.TaskItem
+import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
 import edu.unicauca.taskmaster.ui.screens.components.NavBar
 import edu.unicauca.taskmaster.ui.theme.TaskMasterTheme
@@ -42,22 +46,41 @@ fun HomeScreen(
 ) {
     val homeUiState by homeViewModel.uiState.collectAsState()
 
-    Column(modifier = modifier
-        .fillMaxSize()
-    ){
-        HeaderTask()
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .background(Color.LightGray)
-        ) {
-            TasksList(list = homeUiState.task)
-        }
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        // BackgroundWithCircles en el fondo
+        BackgroundWithCircles(blurRadius = 0.4f)
 
-        NavBar()
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            
+            HeaderTask(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .zIndex(1f) // Colocamos el header por encima del fondo
+            )
+
+            // Lista de tareas, que ocupa el espacio restante
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                TasksList(list = homeUiState.task)
+            }
+
+
+            NavBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .zIndex(1f) // Aseguramos que el NavBar esté visible por encima del fondo
+            )
+        }
     }
 }
+
 
 @Composable
 fun TaskItem(
@@ -113,14 +136,13 @@ fun TasksList(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     TaskMasterTheme {
         HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium))
         )
     }
 }

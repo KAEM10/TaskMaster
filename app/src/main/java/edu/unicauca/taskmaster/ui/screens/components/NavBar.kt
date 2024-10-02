@@ -21,8 +21,6 @@ import edu.unicauca.taskmaster.R
 @Composable
 fun NavBar(
     modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp)
 ){
     Row(
         modifier = Modifier

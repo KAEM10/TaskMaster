@@ -27,8 +27,6 @@ import edu.unicauca.taskmaster.ui.theme.*
 @Composable
 fun HeaderTask(
     modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp)
 ) {
     Row(
         modifier = Modifier
