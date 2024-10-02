@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,25 +19,63 @@ import edu.unicauca.taskmaster.R
 
 
 @Composable
-fun CustomBottomNavigationBar() {
+fun NavBar(
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFFF4444))
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly  // Espaciado entre los íconos
+            .background(red)
+            .padding(8.dp)
+            .size(60.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+
     ) {
-        IconButton(onClick = { /* Acción de inicio */ }) {
-            Icon(painterResource(R.drawable.icon_home), contentDescription = "Inicio", tint = Color.Black)
+        IconButton(
+            onClick = { },
+            modifier = Modifier.size(60.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icon_home),
+                contentDescription = "Inicio",
+                tint = Color.Black,
+                modifier = Modifier.size(40.dp)
+            )
         }
-        IconButton(onClick = { /* Acción de agregar */ }) {
-            Icon(painterResource(R.drawable.icon_add_box), contentDescription = "Agregar", tint = Color.Black)
+        IconButton(
+            onClick = { },
+            modifier = Modifier.size(60.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icon_add_box),
+                contentDescription = "Agregar",
+                tint = Color.Black,
+                modifier = Modifier.size(40.dp)
+            )
         }
-        IconButton(onClick = { /* Acción de calendario */ }) {
-            Icon(painterResource(R.drawable.icon_calendar), contentDescription = "Calendario", tint = Color.Black)
+        IconButton(
+            onClick = {  },
+            modifier = Modifier.size(60.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icon_calendar),
+                contentDescription = "Calendario",
+                tint = Color.Black,
+                modifier = Modifier.size(40.dp)
+            )
         }
-        IconButton(onClick = { /* Acción de menú */ }) {
-            Icon(painterResource(R.drawable.icon_menu), contentDescription = "Menú", tint = Color.Black)
+        IconButton(
+            onClick = {  },
+            modifier = Modifier.size(60.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icon_menu),
+                contentDescription = "Menú",
+                tint = Color.Black,
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
@@ -46,6 +85,6 @@ fun CustomBottomNavigationBar() {
 
 fun HeaderPreview() {
     TaskMasterTheme {
-        CustomBottomNavigationBar()
+        NavBar()
     }
 }
