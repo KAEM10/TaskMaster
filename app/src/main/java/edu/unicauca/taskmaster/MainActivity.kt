@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import edu.unicauca.taskmaster.ui.screens.home.HomeScreen
 import edu.unicauca.taskmaster.ui.theme.TaskMasterTheme
 import edu.unicauca.taskmaster.ui.screens.home.WelcomeScreen
 
@@ -17,8 +18,11 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    //HomeScreen()
-                    WelcomeScreen(blurRadius = 0f)
+                    HomeScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                    //WelcomeScreen(blurRadius = 0f)
                 }
             }
         }

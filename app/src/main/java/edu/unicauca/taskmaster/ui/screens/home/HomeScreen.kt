@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,10 +43,7 @@ import edu.unicauca.taskmaster.data.model.TaskItem
 import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
 import edu.unicauca.taskmaster.ui.screens.components.NavBar
-import edu.unicauca.taskmaster.ui.theme.TaskMasterTheme
-import edu.unicauca.taskmaster.ui.theme.black
-import edu.unicauca.taskmaster.ui.theme.blue
-import edu.unicauca.taskmaster.ui.theme.red
+import edu.unicauca.taskmaster.ui.theme.*
 
 @Composable
 fun HomeScreen(
@@ -64,6 +62,8 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             HeaderTask(
+                imagen = R.drawable.icono_task_master,
+                textoHeader = stringResource(R.string.HomeScreenTitle),
                 modifier = Modifier
                     .fillMaxWidth()
                     .zIndex(1f) // Colocamos el header por encima del fondo
@@ -94,12 +94,14 @@ fun TaskItem(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val backgroundColor = if (checked) gray else blue
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
             .border(1.dp, black, RoundedCornerShape(20.dp))
-            .background(blue)
+            .background(backgroundColor)
             .padding(24.dp)
     ) {
         Checkbox(

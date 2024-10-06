@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import edu.unicauca.taskmaster.R
 import edu.unicauca.taskmaster.ui.theme.TaskMasterTheme
 import edu.unicauca.taskmaster.ui.theme.*
@@ -26,6 +27,8 @@ import edu.unicauca.taskmaster.ui.theme.*
 
 @Composable
 fun HeaderTask(
+    imagen: Int,
+    textoHeader: String,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -36,13 +39,13 @@ fun HeaderTask(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.icono_task_master),
+            painter = painterResource(id = imagen),
             modifier = Modifier.size(45.dp),
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "Tareas de Hoy",
+            text = textoHeader,
             color = Color.Black,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
@@ -54,6 +57,12 @@ fun HeaderTask(
 @Composable
 fun HeaderTaskPreview() {
     TaskMasterTheme {
-        HeaderTask()
+        HeaderTask(
+            imagen = R.drawable.icono_task_master,
+            textoHeader = "Tareas de hoy",
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(1f) // Colocamos el header por encima del fondo
+        )
     }
 }
