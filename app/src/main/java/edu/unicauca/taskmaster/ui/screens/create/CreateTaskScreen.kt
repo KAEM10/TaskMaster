@@ -31,9 +31,8 @@ fun HabitScreen(
     ) {
         BackgroundWithCircles(blurRadius = 0.4f)
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxSize(),
+            //verticalArrangement = Arrangement.SpaceBetween
         ) {
             HeaderTask(
                 imagen = R.drawable.icon_close,
@@ -46,17 +45,18 @@ fun HabitScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(blue)
-                    .padding(16.dp)
-                    .height(500.dp)
             ) {
-                HabitNameSection()
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HabitSection()
+                    Spacer(modifier = Modifier.height(20.dp))
+                    SaveButton()
+                }
             }
-            
-            SaveButton()
 
             NavBar(
                 modifier = Modifier
@@ -70,16 +70,25 @@ fun HabitScreen(
 
 
 @Composable
-fun HabitNameSection(
+fun HabitSection(
     modifier: Modifier = Modifier
 ) {
-    Column{
-        NameSection()
-        Divider()
-        ListDaysSection()
-        Divider()
-        ReminderSection()
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(blue)
+            .padding(16.dp)
+    ){
+        Column{
+            NameSection()
+            HorizontalDivider(thickness = 3.dp, color = black, modifier = Modifier.padding(vertical = 24.dp))
+            ListDaysSection()
+            HorizontalDivider(thickness = 3.dp, color = black, modifier = Modifier.padding(vertical = 24.dp))
+            ReminderSection()
+        }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,13 +116,6 @@ fun NameSection(
             containerColor = blue_3
         ),
     )
-}
-
-@Composable
-fun Divider() {
-    Spacer(modifier = Modifier.height(40.dp))
-    HorizontalDivider(thickness = 3.dp, color = black)
-    Spacer(modifier = Modifier.height(40.dp))
 }
 
 @Composable
@@ -156,10 +158,10 @@ fun ReminderSection(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier.fillMaxWidth()
     ) {
-        ReminderButton("Mañana")
-        ReminderButton("Tarde")
-        ReminderButton("Noche")
-        ReminderButton("Todas", selected = true)
+        ReminderButton("Mañana", Modifier.weight(1f))
+        ReminderButton("Tarde", Modifier.weight(1f))
+        ReminderButton("Noche", Modifier.weight(1f))
+        ReminderButton("Todas", Modifier.weight(1f),selected = true)
     }
 }
 
@@ -177,7 +179,7 @@ fun DayButton(day: String) {
 }
 
 @Composable
-fun ReminderButton(text: String, modifier: Modifier = Modifier.size(82.dp), selected: Boolean = false) {
+fun ReminderButton(text: String, modifier: Modifier = Modifier, selected: Boolean = false) {
     TextButton(
         onClick = { /* Acción del botón */ },
         modifier = modifier
