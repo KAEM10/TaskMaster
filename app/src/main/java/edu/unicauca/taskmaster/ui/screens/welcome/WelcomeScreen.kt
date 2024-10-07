@@ -1,4 +1,4 @@
-package edu.unicauca.taskmaster.ui.screens.home
+package edu.unicauca.taskmaster.ui.screens.welcome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
