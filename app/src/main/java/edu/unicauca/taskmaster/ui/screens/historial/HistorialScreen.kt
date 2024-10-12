@@ -27,7 +27,6 @@ fun HistotialScreen(
         BackgroundWithCircles(blurRadius = 0.4f)
         Column(
             modifier = Modifier.fillMaxSize(),
-            // verticalArrangement = Arrangement.SpaceBetween
         ) {
             HeaderTask(
                 imagen = R.drawable.icono_task_master,
@@ -60,17 +59,16 @@ fun CalendarWithTasks() {
     // Estado para la fecha seleccionada
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
 
-    // Estado para controlar si la fecha ha sido seleccionada manualmente
-    var isDateSelectedManually by remember { mutableStateOf(false) }
+    // Recolección del estado actual de la fecha seleccionada para forzar la recomposición
+    val day = selectedDate.get(Calendar.DAY_OF_MONTH)
+    val month = selectedDate.get(Calendar.MONTH) + 1 // +1 porque los meses comienzan en 0
+    val year = selectedDate.get(Calendar.YEAR)
 
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
-
-        // CalendarView (de la vista tradicional)
         AndroidView(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,14 +82,15 @@ fun CalendarWithTasks() {
                     // Listener para la selección de una nueva fecha
                     setOnDateChangeListener { _, year, month, dayOfMonth ->
                         // Actualiza la fecha seleccionada cuando se hace clic en una fecha
-                        selectedDate.set(year, month, dayOfMonth)
-                        isDateSelectedManually = true // Marcar que el usuario ha seleccionado una fecha
+                        selectedDate = Calendar.getInstance().apply {
+                            set(year, month, dayOfMonth)
+                        }
                     }
                 }
             },
             update = { calendarView ->
-                // Si la fecha no ha sido seleccionada manualmente, establecer la fecha actual
-                if (!isDateSelectedManually) {
+                // Actualiza la vista solo si la fecha ha cambiado
+                if (calendarView.date != selectedDate.timeInMillis) {
                     calendarView.date = selectedDate.timeInMillis
                 }
             }
@@ -101,9 +100,7 @@ fun CalendarWithTasks() {
 
         // Muestra la fecha seleccionada
         Text(
-            text = "Fecha seleccionada: ${selectedDate.get(Calendar.DAY_OF_MONTH)}/" +
-                    "${selectedDate.get(Calendar.MONTH) + 1}/" + // Los meses en CalendarView empiezan desde 0
-                    "${selectedDate.get(Calendar.YEAR)}",
+            text = "Fecha seleccionada: $day/$month/$year",
             style = MaterialTheme.typography.titleSmall
         )
     }
