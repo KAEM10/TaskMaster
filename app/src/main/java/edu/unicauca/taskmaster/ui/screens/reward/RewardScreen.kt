@@ -2,6 +2,8 @@ package edu.unicauca.taskmaster.ui.screens.reward
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,10 +21,18 @@ import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
 import edu.unicauca.taskmaster.ui.screens.components.NavBar
 
+data class RewardItem(
+    val name: String,
+    var achieved: Boolean = false
+)
+
 @Composable
 fun RewardScreen(
     modifier: Modifier = Modifier
 ) {
+    var rewardName by remember { mutableStateOf("") }
+    var rewardsList by remember { mutableStateOf(mutableListOf<RewardItem>()) }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -44,13 +54,87 @@ fun RewardScreen(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                reward(
+                Column(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
-                    tasksCompleted = 17,  // Tareas completadas
-                    totalTasks = 20        // Total de tareas
-                )
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Input para agregar nuevas recompensas
+                    BasicTextField(
+                        value = rewardName,
+                        onValueChange = { rewardName = it },
+                        decorationBox = { innerTextField ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                if (rewardName.isEmpty()) {
+                                    Text(text = "Escribe una recompensa", color = Color.Gray)
+                                }
+                                innerTextField()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    // Botón para agregar recompensas
+                    Button(
+                        onClick = {
+                            if (rewardName.isNotBlank()) {
+                                rewardsList.add(RewardItem(rewardName))
+                                rewardName = ""
+                            }
+                        }
+                    ) {
+                        Text(text = "Agregar Recompensa")
+                    }
+
+                    // Mostrar recompensas pendientes
+                    Text(
+                        text = "Por Lograr",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    rewardsList.filter { !it.achieved }.forEach { reward ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = reward.name, modifier = Modifier.weight(1f))
+                            Button(
+                                onClick = { reward.achieved = true }
+                            ) {
+                                Text(text = "Logrado")
+                            }
+                        }
+                    }
+
+                    // Mostrar recompensas conseguidas
+                    Text(
+                        text = "Conseguido",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    rewardsList.filter { it.achieved }.forEach { reward ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = reward.name, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
             }
 
             NavBar(
@@ -62,73 +146,6 @@ fun RewardScreen(
     }
 }
 
-@Composable
-fun reward(
-    modifier: Modifier = Modifier,
-    tasksCompleted: Int,  // Tareas completadas
-    totalTasks: Int        // Total de tareas
-){
-    val percentageCompleted = (tasksCompleted.toFloat() / totalTasks) * 100
-    // Mostrar recompensa si el porcentaje es mayor o igual al 85%
-    if (percentageCompleted >= 85) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "¡Felicidades!",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.Green,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Imagen de recompensa (ej. trofeo o medalla)
-            Image(
-                painter = painterResource(id = R.drawable.icon_calendar), // Agrega una imagen de trofeo o similar en res/drawable
-                contentDescription = "Recompensa",
-                modifier = Modifier.size(150.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Mensaje de recompensa
-            Text(
-                text = "Has completado el 85% de tus tareas. ¡Sigue así!",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = Color.Black,
-                    fontSize = 18.sp
-                )
-            )
-        }
-    } else {
-        // Mensaje si no se ha alcanzado el 85%
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "¡Sigue trabajando!",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.Red,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Mensaje motivacional
-            Text(
-                text = "Has completado el ${percentageCompleted.toInt()}% de tus tareas. ¡Alcanza el 85% para obtener una recompensa!",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = Color.Black,
-                    fontSize = 18.sp
-                )
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
