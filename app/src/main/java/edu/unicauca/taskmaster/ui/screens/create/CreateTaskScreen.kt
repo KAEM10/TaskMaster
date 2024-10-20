@@ -195,6 +195,14 @@ fun ListDaysSection(
         }
 
     }
+    if (selectedDays.isEmpty()) {
+        Text(
+            text = "Por favor, selecciona al menos un día.",
+            color = Color.Red, // Color rojo para el mensaje
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
 
 @Composable
