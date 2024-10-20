@@ -44,10 +44,6 @@ import edu.unicauca.taskmaster.ui.theme.*
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(),
-    onCalendarClicked: () -> Unit,
-    onAddClicked: () -> Unit,
-    onHomeClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val homeUiState by homeViewModel.uiState.collectAsState()
@@ -76,15 +72,6 @@ fun HomeScreen(
             ) {
                 TasksList(list = homeUiState.task)
             }
-            NavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f) // Aseguramos que el NavBar esté visible por encima del fondo
-                    , onCalendarClicked = { onCalendarClicked() },
-                onHomeClicked = { onHomeClicked() },
-                onAddClicked = { onAddClicked() },
-                onSettingsClicked = { onSettingsClicked() }
-            )
         }
     }
 }
@@ -164,11 +151,7 @@ fun HomeScreenPreview() {
     TaskMasterTheme {
         HomeScreen(
             modifier = Modifier
-                .fillMaxSize(),
-            onHomeClicked = {},
-            onAddClicked = {},
-            onCalendarClicked = {},
-            onSettingsClicked = {}
+                .fillMaxSize()
         )
     }
 }

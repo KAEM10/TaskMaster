@@ -42,10 +42,6 @@ import edu.unicauca.taskmaster.ui.theme.*
 
 @Composable
 fun ConfigScreen(
-    onAddClicked: () -> Unit,
-    onHomeClicked: () -> Unit,
-    onCalendarClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -72,16 +68,6 @@ fun ConfigScreen(
             ) {
                 ConfigSection()
             }
-
-            NavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f),
-                onAddClicked = { onAddClicked() },
-                onHomeClicked = { onHomeClicked() },
-                onCalendarClicked = { onCalendarClicked() },
-                onSettingsClicked = { onSettingsClicked() }
-            )
         }
     }
 }
@@ -204,10 +190,5 @@ fun RewardSection() {
 @Preview
 @Composable
 fun ConfigScreenPreview() {
-    ConfigScreen(
-        onAddClicked = {},
-        onHomeClicked = {},
-        onCalendarClicked = {},
-        onSettingsClicked = {}
-    )
+    ConfigScreen()
 }

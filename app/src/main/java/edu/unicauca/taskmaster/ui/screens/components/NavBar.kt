@@ -20,10 +20,10 @@ import edu.unicauca.taskmaster.R
 
 @Composable
 fun NavBar(
-    onHomeClicked: () -> Unit,
-    onAddClicked: () -> Unit,
-    onCalendarClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
+    onHomeClicked: () -> Unit = {},
+    onAddClicked: () -> Unit = {},
+    onCalendarClicked: () -> Unit = {},
+    onSettingsClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     Row(

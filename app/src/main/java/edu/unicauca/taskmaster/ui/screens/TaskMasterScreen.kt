@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.unicauca.taskmaster.R
+import edu.unicauca.taskmaster.ui.screens.components.NavBar
 import edu.unicauca.taskmaster.ui.screens.config.ConfigScreen
 import edu.unicauca.taskmaster.ui.screens.create.CreateTaskViewModel
 import edu.unicauca.taskmaster.ui.screens.create.CreateTaskScreen
@@ -75,11 +76,36 @@ fun TaskMasterApp(
         backStackEntry?.destination?.route ?: TaskMasterScreen.Home.name
     )
     Scaffold(
-        topBar = {
-            TaskMasterAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+        bottomBar = {
+            NavBar(
+                onHomeClicked = {
+                    navController.navigate(TaskMasterScreen.Home.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onAddClicked = {
+                    navController.navigate(TaskMasterScreen.CreateTask.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onCalendarClicked = {
+                    navController.navigate(TaskMasterScreen.Calendar.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onSettingsClicked = {
+                    navController.navigate(TaskMasterScreen.Settings.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                }
             )
         }
 
@@ -96,38 +122,24 @@ fun TaskMasterApp(
                 CreateTaskScreen(
                     habitName = createTaskUiState.taskName,
                     onHabitNameChanged = { createTaskViewModel.onHabitNameChanged(it) },
+                    selectedDays = createTaskUiState.selectedDays,
                     onDaySelected = { createTaskViewModel.onDaySelected(it) },
+                    reminderSelected = createTaskUiState.reminderType,
                     onReminderSelected = { createTaskViewModel.onReminderSelected(it) },
-                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked() },
-                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
-                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
-                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) },
-                    onMenuClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) }
+                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked() }
                 )
             }
 
             composable(route = TaskMasterScreen.Home.name) {
-                HomeScreen(
-                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) },
-                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
-                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
-                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) })
+                HomeScreen()
             }
 
             composable(route = TaskMasterScreen.Calendar.name) {
-                HistotialScreen(
-                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
-                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
-                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) },
-                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) })
+                HistotialScreen()
             }
 
             composable(route = TaskMasterScreen.Settings.name) {
-                ConfigScreen(
-                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
-                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
-                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) },
-                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) })
+                ConfigScreen()
             }
         }
     }

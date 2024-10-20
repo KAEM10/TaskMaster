@@ -19,10 +19,6 @@ import java.util.*
 
 @Composable
 fun HistotialScreen(
-    onHomeClicked: () -> Unit,
-    onAddClicked: () -> Unit,
-    onSettingsClicked: () -> Unit,
-    onCalendarClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -48,16 +44,6 @@ fun HistotialScreen(
             ) {
                 CalendarWithTasks()
             }
-
-            NavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f),
-                onHomeClicked = { onHomeClicked() },
-                onAddClicked = { onAddClicked() },
-                onSettingsClicked = { onSettingsClicked() },
-                onCalendarClicked = { onCalendarClicked() }
-            )
         }
     }
 }
@@ -117,10 +103,5 @@ fun CalendarWithTasks() {
 @Preview
 @Composable
 fun PreviewHistorialScreen() {
-    HistotialScreen(
-        onHomeClicked = {},
-        onAddClicked = {},
-        onCalendarClicked = {},
-        onSettingsClicked = {}
-    )
+    HistotialScreen()
 }

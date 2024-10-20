@@ -26,13 +26,11 @@ import edu.unicauca.taskmaster.ui.theme.*
 fun CreateTaskScreen(
     habitName: String,
     onHabitNameChanged: (String) -> Unit,
+    selectedDays: List<String>,
     onDaySelected: (String) -> Unit,
+    reminderSelected: String,
     onReminderSelected: (String) -> Unit,
     onSaveButtonClicked: () -> Unit,
-    onCalendarClicked: () -> Unit,
-    onAddClicked: () -> Unit,
-    onHomeClicked: () -> Unit,
-    onMenuClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -64,7 +62,9 @@ fun CreateTaskScreen(
                     HabitSection(
                         habitName = habitName,
                         onHabitNameChanged = { onHabitNameChanged(it) },
+                        selectedDays = selectedDays,
                         onDaySelected = { onDaySelected(it) },
+                        reminderSelected = reminderSelected,
                         onReminderSelected = { onReminderSelected(it) }
                     )
                     Spacer(modifier = Modifier.height(20.dp))
@@ -73,14 +73,6 @@ fun CreateTaskScreen(
                     )
                 }
             }
-
-            NavBar(
-                modifier = Modifier.fillMaxWidth().zIndex(1f),
-                onCalendarClicked = { onCalendarClicked() },
-                onAddClicked = { onAddClicked() },
-                onHomeClicked = { onHomeClicked() },
-                onSettingsClicked = { onMenuClicked() }
-            )
         }
     }
 }
@@ -91,7 +83,9 @@ fun CreateTaskScreen(
 fun HabitSection(
     habitName: String,
     onHabitNameChanged: (String) -> Unit,
+    selectedDays: List<String>,
     onDaySelected: (String) -> Unit,
+    reminderSelected: String,
     onReminderSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -109,10 +103,12 @@ fun HabitSection(
             )
             HorizontalDivider(thickness = 3.dp, color = black, modifier = Modifier.padding(vertical = 24.dp))
             ListDaysSection(
+                selectedDays = selectedDays,
                 onDaySelected = { onDaySelected(it) }
             )
             HorizontalDivider(thickness = 3.dp, color = black, modifier = Modifier.padding(vertical = 24.dp))
             ReminderSection(
+                reminderSelected = reminderSelected,
                 onReminderSelected = { onReminderSelected(it) }
             )
         }
@@ -151,6 +147,8 @@ fun NameSection(
 
 @Composable
 fun ListDaysSection(
+    days: List<String> = listOf("L", "M", "X", "J", "V", "S", "D"),
+    selectedDays: List<String>,
     onDaySelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -165,25 +163,19 @@ fun ListDaysSection(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier.fillMaxWidth()
     ) {
-        DayButton(day = "D",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("L",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("M",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("M",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("J",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("V",
-            onDaySelected = { onDaySelected(it) })
-        DayButton("S",
-            onDaySelected = { onDaySelected(it) })
+
+        days.forEach { day ->
+            DayButton(day = day,
+                onDaySelected = { onDaySelected(it) },
+                selected = false)
+
+        }
     }
 }
 
 @Composable
 fun ReminderSection(
+    reminderSelected: String,
     onReminderSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -198,24 +190,36 @@ fun ReminderSection(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier.fillMaxWidth()
     ) {
-        ReminderButton(text = "Mañana",
+        ReminderButton(
+            reminderSelected = reminderSelected,
+            text = "Mañana",
             onSelectedChanged = { onReminderSelected(it) },
-            modifier = Modifier.weight(1f))
-        ReminderButton(text = "Tarde",
+            modifier = Modifier.weight(1f)
+        )
+        ReminderButton(
+            reminderSelected = reminderSelected,
+            text = "Tarde",
             onSelectedChanged = { onReminderSelected(it) },
-            modifier = Modifier.weight(1f))
-        ReminderButton(text = "Noche",
+            modifier = Modifier.weight(1f)
+        )
+        ReminderButton(
+            reminderSelected = reminderSelected,
+            text = "Noche",
             onSelectedChanged = { onReminderSelected(it) },
-            modifier = Modifier.weight(1f))
-        ReminderButton(text = "Todas",
+            modifier = Modifier.weight(1f)
+        )
+        ReminderButton(
+            reminderSelected = reminderSelected,
+            text = "Todas",
             onSelectedChanged = { onReminderSelected(it) },
-            modifier = Modifier.weight(1f),
-            selected = true)
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
 @Composable
 fun DayButton(
+    selected: Boolean,
     day: String,
     onDaySelected: (String) -> Unit) {
     TextButton(
@@ -223,32 +227,34 @@ fun DayButton(
         modifier = Modifier
             .size(40.dp)
             .border(1.dp, Color.Black, RoundedCornerShape(50))
-            .background(Color(0xFF90CAF9), RoundedCornerShape(50))
+            .background(Color(0xFF90CAF9), RoundedCornerShape(50)),
+        colors = ButtonDefaults.buttonColors(containerColor = if (selected) Color.Black else Color(0xFF90CAF9))
     ) {
         Text(text = day, color = Color.Black, fontWeight = FontWeight.Bold)
     }
 }
 
 @Composable
-fun ReminderButton(text: String,
-                   modifier: Modifier = Modifier,
-                   selected: Boolean = false,
-                   onSelectedChanged: (String) -> Unit) {
+fun ReminderButton(
+    reminderSelected: String,
+    text: String,
+    modifier: Modifier = Modifier,
+    onSelectedChanged: (String) -> Unit) {
     TextButton(
         onClick = { onSelectedChanged(text) },
         modifier = modifier
             .padding(4.dp)
             .border(
-                width = if (selected) 2.dp else 1.dp,
+                width = if (reminderSelected.equals(text)) 2.dp else 1.dp,
                 color = black,
                 shape = RoundedCornerShape(10.dp)
             )
             .background(
-                color = if (selected) black else blue_3,
+                color = if (reminderSelected.equals(text)) black else blue_3,
                 shape = RoundedCornerShape(10.dp)
-            )
+            ),
     ) {
-        Text(text = text, color = if (selected) Color.White else black, fontWeight = FontWeight.Bold)
+        Text(text = text, color = if (reminderSelected.equals(text)) Color.White else black, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -275,12 +281,10 @@ fun HabitScreenPreview() {
     CreateTaskScreen(
         habitName = "",
         onHabitNameChanged = {},
+        selectedDays = listOf(),
         onDaySelected = {},
+        reminderSelected = "",
         onReminderSelected = {},
-        onSaveButtonClicked = {},
-        onCalendarClicked = {},
-        onAddClicked = {},
-        onHomeClicked = {},
-        onMenuClicked = {}
+        onSaveButtonClicked = {}
     )
 }
