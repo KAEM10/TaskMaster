@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -119,6 +120,7 @@ fun TaskMasterApp(
         ) {
 
             composable(route = TaskMasterScreen.CreateTask.name) {
+                val context = LocalContext.current  // Obtén el contexto local
                 CreateTaskScreen(
                     habitName = createTaskUiState.taskName,
                     onHabitNameChanged = { createTaskViewModel.onHabitNameChanged(it) },
@@ -126,7 +128,7 @@ fun TaskMasterApp(
                     onDaySelected = { createTaskViewModel.onDaySelected(it) },
                     reminderSelected = createTaskUiState.reminderType,
                     onReminderSelected = { createTaskViewModel.onReminderSelected(it) },
-                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked() }
+                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked(context) }
                 )
             }
 

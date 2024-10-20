@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import edu.unicauca.taskmaster.R
 import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
@@ -123,7 +124,9 @@ fun NameSection(
     onHabitNameChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ){
-    
+
+    var isFieldEmpty by remember { mutableStateOf(false) }
+    var isFieldFocused by remember { mutableStateOf(false) }
     Text(
         text = stringResource(id = R.string.name),
         fontSize = 20.sp,
@@ -133,16 +136,34 @@ fun NameSection(
     Spacer(modifier = Modifier.height(20.dp))
     TextField(
         value = habitName,
-        onValueChange = { onHabitNameChanged(it) },  // Actualiza la variable habitName
+        onValueChange = { onHabitNameChanged(it)
+            isFieldEmpty = it.isEmpty() // Actualiza el estado si el campo está vacío
+                        },  // Actualiza la variable habitName
         label = { Text("Nombre del hábito") },
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .border(1.dp, black, RoundedCornerShape(20.dp)),
+            .border(1.dp, black, RoundedCornerShape(20.dp))
+            .onFocusChanged { focusState ->
+                isFieldFocused = focusState.isFocused// Actualiza el estado de enfoque
+                if (!isFieldFocused && habitName.isEmpty()) {
+                    isFieldEmpty = true // Muestra el mensaje si se pierde el enfoque y está vacío
+                } else {
+                    isFieldEmpty = false // Oculta el mensaje si hay texto
+                }
+            },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = blue_3
         ),
     )
+    if (isFieldEmpty) {
+        Text(
+            text = "Este campo es requerido",
+            color = Color.Red, // Color rojo para el mensaje de advertencia
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
 
 @Composable
@@ -165,11 +186,14 @@ fun ListDaysSection(
     ) {
 
         days.forEach { day ->
-            DayButton(day = day,
-                onDaySelected = { onDaySelected(it) },
-                selected = false)
-
+            DayButton(
+                day = day,
+                selected = selectedDays.contains(day),  // Verifica si el día está en selectedDays
+                onDaySelected = { onDaySelected(it)
+                }
+            )
         }
+
     }
 }
 
@@ -230,7 +254,10 @@ fun DayButton(
             .background(Color(0xFF90CAF9), RoundedCornerShape(50)),
         colors = ButtonDefaults.buttonColors(containerColor = if (selected) Color.Black else Color(0xFF90CAF9))
     ) {
-        Text(text = day, color = Color.Black, fontWeight = FontWeight.Bold)
+        Text(text = day,
+            color = if (selected) Color.White else Color.Black, // Cambia el color del texto según el estado
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 
