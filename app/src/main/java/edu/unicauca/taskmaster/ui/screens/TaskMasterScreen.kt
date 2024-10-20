@@ -13,18 +13,29 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.unicauca.taskmaster.R
+import edu.unicauca.taskmaster.ui.screens.config.ConfigScreen
+import edu.unicauca.taskmaster.ui.screens.create.CreateTaskViewModel
+import edu.unicauca.taskmaster.ui.screens.create.CreateTaskScreen
+import edu.unicauca.taskmaster.ui.screens.historial.HistotialScreen
+import edu.unicauca.taskmaster.ui.screens.home.HomeScreen
 
 
 enum class TaskMasterScreen(@StringRes val title: Int) {
-    Home(title = R.string.app_name)
+    Home(title = R.string.app_name),
+    CreateTask(title = R.string.create_task),
+    Calendar(title = R.string.calendar),
+    Settings(title = R.string.settings)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +67,7 @@ fun TaskMasterAppBar(
 
 @Composable
 fun TaskMasterApp(
-    //viewModel: OrderViewModel = viewModel(),
+    createTaskViewModel: CreateTaskViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -73,40 +84,51 @@ fun TaskMasterApp(
         }
 
     ) { innerPadding ->
-        //val uiState by viewModel.uiState.collectAsState()
+        val createTaskUiState by createTaskViewModel.uiState.collectAsState()
 
         NavHost(
             navController = navController,
             startDestination = TaskMasterScreen.Home.name,
             modifier = Modifier.padding(innerPadding)
         ) {
-            /*
+
+            composable(route = TaskMasterScreen.CreateTask.name) {
+                CreateTaskScreen(
+                    habitName = createTaskUiState.taskName,
+                    onHabitNameChanged = { createTaskViewModel.onHabitNameChanged(it) },
+                    onDaySelected = { createTaskViewModel.onDaySelected(it) },
+                    onReminderSelected = { createTaskViewModel.onReminderSelected(it) },
+                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked() },
+                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
+                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
+                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) },
+                    onMenuClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) }
+                )
+            }
+
             composable(route = TaskMasterScreen.Home.name) {
                 HomeScreen(
-                    quantityOptions = DataSource.quantityOptions,
-                    onNextButtonClicked = {
-                        viewModel.setQuantity(it)
-                        navController.navigate(CupcakeScreen.Flavor.name) },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
-                )
+                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) },
+                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
+                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
+                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) })
             }
 
-
-            composable(route = CupcakeScreen.Flavor.name) {
-                val context = LocalContext.current
-                SelectOptionScreen(
-                    subtotal = uiState.price,
-                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Pickup.name) },
-                    onCancelButtonClicked = { cancelOrderAndNavigateToStart(viewModel, navController) },
-                    options = DataSource.flavors.map { id -> context.resources.getString(id) },
-                    onSelectionChanged = { viewModel.setFlavor(it) },
-                    modifier = Modifier.fillMaxHeight()
-                )
+            composable(route = TaskMasterScreen.Calendar.name) {
+                HistotialScreen(
+                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
+                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
+                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) },
+                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) })
             }
 
-             */
+            composable(route = TaskMasterScreen.Settings.name) {
+                ConfigScreen(
+                    onHomeClicked = { navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false) },
+                    onAddClicked = { navController.popBackStack(TaskMasterScreen.CreateTask.name, inclusive = false) },
+                    onSettingsClicked = { navController.popBackStack(TaskMasterScreen.Settings.name, inclusive = false) },
+                    onCalendarClicked = { navController.popBackStack(TaskMasterScreen.Calendar.name, inclusive = false) })
+            }
         }
     }
 }

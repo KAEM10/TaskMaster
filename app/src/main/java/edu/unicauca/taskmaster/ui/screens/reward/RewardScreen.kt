@@ -28,6 +28,10 @@ data class RewardItem(
 
 @Composable
 fun RewardScreen(
+    onSettingsClicked: () -> Unit,
+    onHomeClicked: () -> Unit,
+    onCalendarClicked: () -> Unit,
+    onAddClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var rewardName by remember { mutableStateOf("") }
@@ -140,7 +144,11 @@ fun RewardScreen(
             NavBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .zIndex(1f)
+                    .zIndex(1f),
+                onSettingsClicked = { onSettingsClicked() },
+                onHomeClicked = { onHomeClicked() },
+                onCalendarClicked = { onCalendarClicked() },
+                onAddClicked = { onAddClicked() }
             )
         }
     }
@@ -150,5 +158,10 @@ fun RewardScreen(
 @Preview
 @Composable
 fun PreviewRewardScreen() {
-    RewardScreen()
+    RewardScreen(
+        onSettingsClicked = {},
+        onHomeClicked = {},
+        onCalendarClicked = {},
+        onAddClicked = {}
+    )
 }

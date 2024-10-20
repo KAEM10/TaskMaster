@@ -1,10 +1,8 @@
 package edu.unicauca.taskmaster.ui.screens.home
 
 import androidx.lifecycle.ViewModel
-import edu.unicauca.taskmaster.data.model.TaskItem
 import edu.unicauca.taskmaster.data.repository.TaskRepository
 import edu.unicauca.taskmaster.data.source.TaskLocalDataSource
-import edu.unicauca.taskmaster.ui.state.HomeScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

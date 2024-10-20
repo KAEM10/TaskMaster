@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">TaskMaster</string>
     <string name="back_button">Atrás</string>
+    <string name="HomeScreenTitle">Tareas de hoy</string>
+    <string name="btn_guardar">Guardar</string>
+    <string name="create_task">Crear tarea</string>
+    <string name="name">Nombre</string>
+    <string name="calendar">Calendario</string>
+    <string name="settings">Configuraciones</string>
 </resources>
