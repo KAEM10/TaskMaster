@@ -7,23 +7,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.room.Room
-import edu.unicauca.taskmaster.data.AppDataBase
-import edu.unicauca.taskmaster.data.dao.TaskDao
+import dagger.hilt.android.AndroidEntryPoint
+import edu.unicauca.taskmaster.data.source.LocalDataSource
 import edu.unicauca.taskmaster.data.entity.TaskEntity
 import edu.unicauca.taskmaster.ui.screens.TaskMasterApp
-import edu.unicauca.taskmaster.ui.screens.TaskMasterScreen
-import edu.unicauca.taskmaster.ui.screens.historial.HistotialScreen
 import edu.unicauca.taskmaster.ui.theme.TaskMasterTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = Room.databaseBuilder(
             applicationContext,
-            AppDataBase::class.java, "database-task"
+            LocalDataSource::class.java, "database-task"
         ).build()
         // Insertar tarea en un hilo secundario
         CoroutineScope(Dispatchers.IO).launch {

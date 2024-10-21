@@ -1,4 +1,4 @@
-package edu.unicauca.taskmaster.data
+package edu.unicauca.taskmaster.data.source
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -10,6 +10,6 @@ import edu.unicauca.taskmaster.data.entity.TaskEntity
  *
  */
 @Database(entities = [TaskEntity::class], version = 1)
-abstract class AppDataBase : RoomDatabase() {
+abstract class LocalDataSource : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 }
