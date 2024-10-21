@@ -2,6 +2,7 @@ package edu.unicauca.taskmaster.ui.screens.reward
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -24,6 +25,8 @@ import edu.unicauca.taskmaster.R
 import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
 import edu.unicauca.taskmaster.ui.screens.components.NavBar
+import edu.unicauca.taskmaster.ui.theme.black
+import edu.unicauca.taskmaster.ui.theme.blue
 import edu.unicauca.taskmaster.ui.theme.red
 
 data class RewardItem(
@@ -54,39 +57,13 @@ fun RewardScreen(
             )
 
             Box(
-                contentAlignment = Alignment.TopStart,
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
                 listReward(viewModel)
-
-                // Círculo que abre el diálogo
-                Canvas(
-                    modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { showAddRewardDialog = true } // Abrir diálogo al hacer clic
-                ) {
-                    drawCircle(
-                        color = red,
-                        radius = size.width * (0.13f),
-                        center = Offset(
-                            x = size.width * (0.85f),
-                            y = size.height * (0.91f)
-                        )
-                    )
-
-                }
-                Image(
-                    painter = painterResource(id = R.drawable.icon_add_box),  // Agrega tu ícono aquí
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .align(Alignment.BottomEnd)
-                        .padding(15.dp),
-                    contentScale = ContentScale.Crop
-                )
-
+                circleAddReward { showAddRewardDialog = true }
             }
 
             NavBar(
@@ -111,6 +88,43 @@ fun RewardScreen(
 
 
 @Composable
+fun circleAddReward(onAddRewardClick: () -> Unit) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .size(100.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Dibuja el círculo
+            Canvas(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable { onAddRewardClick() }
+            ) {
+                drawCircle(
+                    color = red,
+                    radius = size.minDimension / 2
+                )
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.icon_add_2),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+            )
+        }
+    }
+
+}
+
+@Composable
 fun AddRewardDialog(
     onDismiss: () -> Unit,
     onAddReward: (String) -> Unit
@@ -118,7 +132,9 @@ fun AddRewardDialog(
     var rewardName by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(blue),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -137,6 +153,7 @@ fun AddRewardDialog(
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxWidth()
+                            .background(blue)
                     ) {
                         if (rewardName.isEmpty()) {
                             Text(text = "Escribe una recompensa", color = Color.Gray)
@@ -178,47 +195,65 @@ fun listReward(viewModel: RewardViewModel) {
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Mostrar recompensas pendientes
-        Text(
-            text = "Por Lograr",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        rewardsList.filter { !it.achieved }.forEach { reward ->
-            Row(
+        // Si no hay recompensas, mostrar el mensaje de invitación
+        if (rewardsList.isEmpty()) {
+            Image(
+                painter = painterResource(id = R.drawable.trofeo),  // Agrega tu ícono aquí
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = reward.name, modifier = Modifier.weight(1f))
-                Button(
-                    onClick = { viewModel.markAsAchieved(reward) }
+                    .size(240.dp)
+                    .padding(15.dp),
+                contentScale = ContentScale.Crop
+            )
+            Text(
+                text = "No tienes recompensas aún. ¡Agrega una nueva recompensa!",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = black
+            )
+        } else {
+            // Mostrar recompensas pendientes
+            Text(
+                text = "Por Lograr",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            rewardsList.filter { !it.achieved }.forEach { reward ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Logrado")
+                    Text(text = reward.name, modifier = Modifier.weight(1f))
+                    Button(
+                        onClick = { viewModel.markAsAchieved(reward) }
+                    ) {
+                        Text(text = "Logrado")
+                    }
                 }
             }
-        }
 
-        // Mostrar recompensas conseguidas
-        Text(
-            text = "Conseguido",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        rewardsList.filter { it.achieved }.forEach { reward ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = reward.name, modifier = Modifier.weight(1f))
+            // Mostrar recompensas conseguidas
+            Text(
+                text = "Conseguido",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            rewardsList.filter { it.achieved }.forEach { reward ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = reward.name, modifier = Modifier.weight(1f))
+                }
             }
         }
     }
