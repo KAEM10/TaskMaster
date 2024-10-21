@@ -45,11 +45,8 @@ fun TaskMasterApp(
         bottomBar = {
             NavBar(
                 onHomeClicked = {
-                    navController.navigate(TaskMasterScreen.Home.name) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = false
-                        }
-                    }
+                    homeViewModel.getTask()
+                    navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false)
                 },
                 onAddClicked = {
                     navController.navigate(TaskMasterScreen.CreateTask.name) {

@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
         getTask()
     }
 
-    private fun getTask() {
+    fun getTask() {
         viewModelScope.launch {
             val taskList = taskRepository.getTasks()
             _uiState.update { it.copy(task = taskList) }

@@ -55,7 +55,7 @@ class CreateTaskViewModel @Inject constructor(
         val selectedDays = _uiState.value.selectedDays.joinToString(", ")
         val reminderType = _uiState.value.reminderType
 
-        //Construir el objeto taksEntity
+        //Construir el objeto task
         val newTask = Task(
             taskName = taskName,
             selectedDays = selectedDays.split(", "),

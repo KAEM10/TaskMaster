@@ -11,7 +11,6 @@ class TaskRepository @Inject constructor(
 )
 {
     private val TAG = "TaskRepository"
-    private var idTask = 0
 
     suspend fun getTasks(): List<Task> {
         Log.d(TAG, "getTasks: ")
@@ -25,10 +24,8 @@ class TaskRepository @Inject constructor(
 
     suspend fun saveTask(task: Task) {
         Log.d(TAG, "saveTask: $task")
-        idTask++
         taskDao.insertAll(
             TaskEntity(
-                id = idTask,
                 taskName = task.taskName,
                 selectedDays = task.selectedDays.joinToString(", "),
                 reminderType = task.reminderType
@@ -38,7 +35,6 @@ class TaskRepository @Inject constructor(
 
     suspend fun deleteTask(task: TaskEntity) {
         Log.d(TAG, "deleteTask: $task")
-        idTask--
         taskDao.delete(task)
     }
 }
