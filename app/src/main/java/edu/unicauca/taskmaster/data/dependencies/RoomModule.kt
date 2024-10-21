@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import edu.unicauca.taskmaster.data.dao.TaskDao
+import edu.unicauca.taskmaster.data.repository.TaskRepository
 import edu.unicauca.taskmaster.data.source.LocalDataSource
 import javax.inject.Singleton
 
@@ -21,13 +22,21 @@ class RoomModule {
         return Room.databaseBuilder(
             applicationContext,
             LocalDataSource::class.java, "database-task"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()   //Deshacer esta línea en producción :)
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideTaskDao(localDataSource: LocalDataSource): TaskDao {
         return localDataSource.taskDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskRepository(taskDao: TaskDao): TaskRepository {
+        return TaskRepository(taskDao)
     }
 
 }

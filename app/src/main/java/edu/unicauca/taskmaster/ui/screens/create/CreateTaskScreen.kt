@@ -189,8 +189,7 @@ fun ListDaysSection(
             DayButton(
                 day = day,
                 selected = selectedDays.contains(day),  // Verifica si el día está en selectedDays
-                onDaySelected = { onDaySelected(it)
-                }
+                onDaySelected = { onDaySelected(it) }
             )
         }
 

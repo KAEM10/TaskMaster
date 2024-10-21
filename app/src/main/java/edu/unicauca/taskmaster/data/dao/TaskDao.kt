@@ -10,14 +10,14 @@ import edu.unicauca.taskmaster.data.entity.TaskEntity
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM tasks")
-    fun getAll(): List<TaskEntity>
+    suspend fun getAll(): List<TaskEntity>
 
     @Query("SELECT * FROM tasks WHERE id IN (:Ids)")
-    fun loadAllByIds(Ids: IntArray): List<TaskEntity>
+    suspend fun loadAllByIds(Ids: IntArray): List<TaskEntity>
 
     @Insert
-    fun insertAll(vararg task: TaskEntity)
+    suspend fun insertAll(vararg task: TaskEntity)
 
     @Delete
-    fun delete(task: TaskEntity)
+    suspend fun delete(task: TaskEntity)
 }

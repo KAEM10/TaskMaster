@@ -11,15 +11,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.unicauca.taskmaster.R
+import edu.unicauca.taskmaster.data.entity.TaskEntity
+import edu.unicauca.taskmaster.data.model.Task
+import edu.unicauca.taskmaster.data.repository.TaskRepository
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CreateTaskViewModel: ViewModel() {
+@HiltViewModel
+class CreateTaskViewModel @Inject constructor(
+    private val taskRepository: TaskRepository
+) : ViewModel() {
+
     // Estado del formulario
     private val _uiState = MutableStateFlow(CreateTaskUiState())
     val uiState: StateFlow<CreateTaskUiState> = _uiState.asStateFlow()
 
     // Manejar cambios en el nombre del hábito
-    fun onHabitNameChanged(habitName: String) {
+    fun onTaskNameChanged(habitName: String) {
         _uiState.value = _uiState.value.copy(taskName = habitName)
     }
 
@@ -44,37 +55,51 @@ class CreateTaskViewModel: ViewModel() {
         val selectedDays = _uiState.value.selectedDays.joinToString(", ")
         val reminderType = _uiState.value.reminderType
 
+        //Construir el objeto taksEntity
+        val newTask = Task(
+            taskName = taskName,
+            selectedDays = selectedDays.split(", "),
+            reminderType = reminderType
+        )
+
         if (taskName.isNotEmpty() && selectedDays.isNotEmpty() && reminderType.isNotEmpty()) {
             val message = "Tarea: $taskName\nDías: $selectedDays\nRecordatorio: $reminderType"
             // Llama a un método para mostrar la alerta
-            showAlert(context, message,true)
+            askIfSaveTask(context, message,true, newTask)
         }else{
             val message = "Todos los campos son requeridos"
             // Llama a un método para mostrar la alerta
-            showAlert(context, message,false)
+            askIfSaveTask(context, message,false)
         }
     }
 
-    private fun showAlert(context: Context, message: String ,save:Boolean) {
+    private fun askIfSaveTask(context: Context, message: String, save:Boolean, newTask: Task? = null) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Guardar Tarea")
         builder.setMessage(message)  // Usa el mensaje dl argumento
         builder.setPositiveButton("Aceptar") { dialog, which ->
             if(save){
-                //TODO: aca guardar la info en la bd
                // Toast.makeText(context, "Se ha guardado la Tarea", Toast.LENGTH_LONG).show()
 
-                showCustomToast(context, "Se ha guardado la Tarea")
-                resetForm()
-                showCustomToast(context, "Se ha guardado la Tarea")
+                //Guardar la tarea en la base de datos
+                if (newTask != null) {
+                    viewModelScope.launch {
+                        taskRepository.saveTask(newTask)
+                        showCustomToast(context, "Se ha guardado la Tarea")
+                        resetForm()
+                    }
+                } else showCustomToast(context, "Error al guardar la tarea")
             }
         }
+
         builder.setNegativeButton("Cancelar") { dialog, which ->
             dialog.dismiss()
         }
+
         val alertDialog = builder.create()
         alertDialog.show()
     }
+
     private fun showCustomToast(context: Context, message: String) {
         val inflater = LayoutInflater.from(context)
         val layout: View = inflater.inflate(R.layout.toast_custom, null)

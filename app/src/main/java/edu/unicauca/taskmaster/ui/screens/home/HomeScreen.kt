@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,20 +32,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.unicauca.taskmaster.R
-import edu.unicauca.taskmaster.data.model.TaskItem
+import edu.unicauca.taskmaster.data.model.Task
 import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
-import edu.unicauca.taskmaster.ui.screens.components.NavBar
 import edu.unicauca.taskmaster.ui.theme.*
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = viewModel(),
+    list: List<Task> = listOf(),
     modifier: Modifier = Modifier
 ) {
-    val homeUiState by homeViewModel.uiState.collectAsState()
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -70,7 +66,7 @@ fun HomeScreen(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                TasksList(list = homeUiState.task)
+                TasksList(list = list)
             }
         }
     }
@@ -133,14 +129,14 @@ fun TaskItem(taskName: String, modifier: Modifier = Modifier) {
 @Composable
 fun TasksList(
     modifier: Modifier = Modifier,
-    list: List<TaskItem>
+    list: List<Task>
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.padding(16.dp)
     ) {
         items(list) { task ->
-            TaskItem(taskName = task.label)
+            TaskItem(taskName = task.taskName)
         }
     }
 }

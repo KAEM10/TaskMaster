@@ -1,5 +1,5 @@
 package edu.unicauca.taskmaster.ui.screens.home
 
-import edu.unicauca.taskmaster.data.model.TaskItem
+import edu.unicauca.taskmaster.data.model.Task
 
-data class HomeScreenState(val task: List<TaskItem> = listOf())
+data class HomeScreenState(val task: List<Task> = listOf())

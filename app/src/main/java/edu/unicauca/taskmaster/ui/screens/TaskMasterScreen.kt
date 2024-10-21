@@ -2,22 +2,12 @@ package edu.unicauca.taskmaster.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -31,6 +21,7 @@ import edu.unicauca.taskmaster.ui.screens.create.CreateTaskViewModel
 import edu.unicauca.taskmaster.ui.screens.create.CreateTaskScreen
 import edu.unicauca.taskmaster.ui.screens.historial.HistotialScreen
 import edu.unicauca.taskmaster.ui.screens.home.HomeScreen
+import edu.unicauca.taskmaster.ui.screens.home.HomeViewModel
 
 
 enum class TaskMasterScreen(@StringRes val title: Int) {
@@ -40,36 +31,10 @@ enum class TaskMasterScreen(@StringRes val title: Int) {
     Settings(title = R.string.settings)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TaskMasterAppBar(
-    currentScreen: TaskMasterScreen,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = { Text(stringResource(currentScreen.title)) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = modifier,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button)
-                    )
-                }
-            }
-        }
-    )
-}
-
 @Composable
 fun TaskMasterApp(
     createTaskViewModel: CreateTaskViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -111,6 +76,7 @@ fun TaskMasterApp(
         }
 
     ) { innerPadding ->
+        val homeUiState by homeViewModel.uiState.collectAsState()
         val createTaskUiState by createTaskViewModel.uiState.collectAsState()
 
         NavHost(
@@ -123,7 +89,7 @@ fun TaskMasterApp(
                 val context = LocalContext.current  // Obtén el contexto local
                 CreateTaskScreen(
                     habitName = createTaskUiState.taskName,
-                    onHabitNameChanged = { createTaskViewModel.onHabitNameChanged(it) },
+                    onHabitNameChanged = { createTaskViewModel.onTaskNameChanged(it) },
                     selectedDays = createTaskUiState.selectedDays,
                     onDaySelected = { createTaskViewModel.onDaySelected(it) },
                     reminderSelected = createTaskUiState.reminderType,
@@ -133,7 +99,9 @@ fun TaskMasterApp(
             }
 
             composable(route = TaskMasterScreen.Home.name) {
-                HomeScreen()
+                HomeScreen(
+                    list = homeUiState.task,
+                )
             }
 
             composable(route = TaskMasterScreen.Calendar.name) {

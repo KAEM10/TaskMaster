@@ -20,15 +20,17 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val db = Room.databaseBuilder(
-            applicationContext,
-            LocalDataSource::class.java, "database-task"
-        ).build()
-        // Insertar tarea en un hilo secundario
-        CoroutineScope(Dispatchers.IO).launch {
-            val tarea = TaskEntity(0, "Nueva Tarea")
-            db.taskDao().insertAll(tarea)
-        }
+
+//        val db = Room.databaseBuilder(
+//            applicationContext,
+//            LocalDataSource::class.java, "database-task"
+//        ).build()
+//        // Insertar tarea en un hilo secundario
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val tarea = TaskEntity(0, "Nueva Tarea")
+//            db.taskDao().insertAll(tarea)
+//        }
+
         setContent {
             TaskMasterTheme {
                 Surface(
