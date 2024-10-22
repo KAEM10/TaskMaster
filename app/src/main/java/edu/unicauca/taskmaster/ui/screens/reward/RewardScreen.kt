@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -133,55 +135,60 @@ fun AddRewardDialog(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(blue),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Box(
             modifier = Modifier
+                .padding(16.dp)
+                .background(blue)
+                .clip(RoundedCornerShape(16.dp))
                 .padding(16.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.Center
         ) {
-            // Campo de texto para la recompensa
-            BasicTextField(
-                value = rewardName,
-                onValueChange = { rewardName = it },
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth()
-                            .background(blue)
-                    ) {
-                        if (rewardName.isEmpty()) {
-                            Text(text = "Escribe una recompensa", color = Color.Gray)
+            Column(
+                modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                BasicTextField(
+                    value = rewardName,
+                    onValueChange = { rewardName = it },
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                        ) {
+                            if (rewardName.isEmpty()) {
+                                Text(text = "Escribe una recompensa", color = Color.Gray)
+                            }
+                            innerTextField()
                         }
-                        innerTextField()
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            // Botón para agregar la recompensa
-            Button(
-                onClick = {
-                    if (rewardName.isNotBlank()) {
-                        onAddReward(rewardName)
-                    }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .background(Color.White, shape = RoundedCornerShape(8.dp)) // Fondo blanco para el input
+                        .padding(8.dp)
+                )
+                Button(
+                    onClick = {
+                        if (rewardName.isNotBlank()) {
+                            onAddReward(rewardName)
+                        }
+                    },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text(text = "Agregar Recompensa")
                 }
-            ) {
-                Text(text = "Agregar Recompensa")
-            }
-
-            // Botón para cerrar el diálogo
-            Button(
-                onClick = { onDismiss() }
-            ) {
-                Text(text = "Cancelar")
+                Button(
+                    onClick = { onDismiss() },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text(text = "Cancelar")
+                }
             }
         }
     }
