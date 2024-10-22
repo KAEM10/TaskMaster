@@ -1,5 +1,6 @@
 package edu.unicauca.taskmaster.ui.screens.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,28 +28,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.unicauca.taskmaster.R
 import edu.unicauca.taskmaster.data.model.Task
 import edu.unicauca.taskmaster.ui.screens.components.BackgroundWithCircles
 import edu.unicauca.taskmaster.ui.screens.components.HeaderTask
 import edu.unicauca.taskmaster.ui.theme.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun HomeScreen(
     list: List<Task> = listOf(),
     modifier: Modifier = Modifier
 ) {
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-
         BackgroundWithCircles(blurRadius = 0.4f)
 
         Column(
@@ -58,9 +64,8 @@ fun HomeScreen(
                 textoHeader = stringResource(R.string.HomeScreenTitle),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .zIndex(1f) // Colocamos el header por encima del fondo
+                    .zIndex(1f)
             )
-            // Lista de tareas, que ocupa el espacio restante
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -76,28 +81,27 @@ fun HomeScreen(
 @Composable
 fun TaskItem(
     taskName: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    viewModel: TaskItemViewModel = viewModel(),
+    modifier: Modifier = Modifier,
+    onClose: () -> Unit
 ) {
-    val backgroundColor = if (checked) gray else blue
+    val isChecked by viewModel.isChecked.collectAsState()
+    val backgroundColor by viewModel.backgroundColor.collectAsState()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .border(1.dp, black, RoundedCornerShape(20.dp))
+            .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
             .background(backgroundColor)
             .padding(24.dp)
     ) {
         Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
+            checked = isChecked,
+            onCheckedChange = { viewModel.onCheckedChange(it) },
             modifier = Modifier.size(36.dp)
         )
         Text(
-            fontWeight = FontWeight.Bold,
             text = taskName,
             modifier = Modifier
                 .weight(1f)
@@ -119,25 +123,42 @@ fun TaskItem(taskName: String, modifier: Modifier = Modifier) {
 
     TaskItem(
         taskName = taskName,
-        checked = checkedState,
-        onCheckedChange = { newValue -> checkedState = newValue },
-        onClose = {}, // we will implement this later!
-        modifier = modifier,
+        onClose = {},
+        modifier = modifier
     )
 }
 
 @Composable
 fun TasksList(
-    modifier: Modifier = Modifier,
-    list: List<Task>
+    list: List<Task>,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.padding(16.dp)
     ) {
         items(list) { task ->
-            TaskItem(taskName = task.taskName)
+            TaskItem(
+                taskName = task.taskName,
+                onClose = {}
+            )
         }
+    }
+}
+
+class TaskItemViewModel : ViewModel() {
+    // Estado para manejar si la tarea está marcada o no
+    private val _isChecked = MutableStateFlow(false)
+    val isChecked: StateFlow<Boolean> = _isChecked
+
+    // Estado del color de fondo
+    private val _backgroundColor = MutableStateFlow(blue)
+    val backgroundColor: StateFlow<Color> = _backgroundColor
+
+    // Actualizar el estado de la tarea
+    fun onCheckedChange(checked: Boolean) {
+        _isChecked.value = checked
+        _backgroundColor.value = if (checked) gray else blue
     }
 }
 
