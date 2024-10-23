@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -46,9 +47,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
+class TaskItemViewModel : ViewModel() {
+    // Usamos un mapa para asociar cada tarea con su estado
+    private val _taskStates = MutableStateFlow<Map<Int, TaskState>>(emptyMap())
+    val taskStates: StateFlow<Map<Int, TaskState>> = _taskStates
+
+    // Función para cambiar el estado del checkbox de una tarea específica
+    fun onCheckedChange(taskId: Int, checked: Boolean) {
+        _taskStates.update { currentStates ->
+            val updatedState = currentStates.toMutableMap()
+            updatedState[taskId] = TaskState(checked = checked)
+            updatedState
+        }
+    }
+
+    data class TaskState(
+        val checked: Boolean = false
+    )
+}
+
 @Composable
 fun HomeScreen(
     list: List<Task> = listOf(),
+    viewModel: TaskItemViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -71,22 +92,22 @@ fun HomeScreen(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                TasksList(list = list)
+                TasksList(list = list, viewModel = viewModel)
             }
         }
     }
 }
 
-
 @Composable
 fun TaskItem(
+    taskId: Int,
     taskName: String,
-    viewModel: TaskItemViewModel = viewModel(),
-    modifier: Modifier = Modifier,
-    onClose: () -> Unit
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val isChecked by viewModel.isChecked.collectAsState()
-    val backgroundColor by viewModel.backgroundColor.collectAsState()
+    val backgroundColor = if (isChecked) gray else blue
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -98,7 +119,7 @@ fun TaskItem(
     ) {
         Checkbox(
             checked = isChecked,
-            onCheckedChange = { viewModel.onCheckedChange(it) },
+            onCheckedChange = onCheckedChange,
             modifier = Modifier.size(36.dp)
         )
         Text(
@@ -118,47 +139,28 @@ fun TaskItem(
 }
 
 @Composable
-fun TaskItem(taskName: String, modifier: Modifier = Modifier) {
-    var checkedState by remember { mutableStateOf(false) }
-
-    TaskItem(
-        taskName = taskName,
-        onClose = {},
-        modifier = modifier
-    )
-}
-
-@Composable
 fun TasksList(
     list: List<Task>,
+    viewModel: TaskItemViewModel,
     modifier: Modifier = Modifier
 ) {
+    // Obtenemos los estados de las tareas desde el ViewModel
+    val taskStates by viewModel.taskStates.collectAsState()
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.padding(16.dp)
     ) {
-        items(list) { task ->
+        itemsIndexed(list) { index, task ->
+            val taskState = taskStates[index] ?: TaskItemViewModel.TaskState()
             TaskItem(
+                taskId = index,
                 taskName = task.taskName,
-                onClose = {}
+                isChecked = taskState.checked,
+                onCheckedChange = { isChecked -> viewModel.onCheckedChange(index, isChecked) },
+                onClose = { /* Aquí puedes manejar la lógica de cierre */ }
             )
         }
-    }
-}
-
-class TaskItemViewModel : ViewModel() {
-    // Estado para manejar si la tarea está marcada o no
-    private val _isChecked = MutableStateFlow(false)
-    val isChecked: StateFlow<Boolean> = _isChecked
-
-    // Estado del color de fondo
-    private val _backgroundColor = MutableStateFlow(blue)
-    val backgroundColor: StateFlow<Color> = _backgroundColor
-
-    // Actualizar el estado de la tarea
-    fun onCheckedChange(checked: Boolean) {
-        _isChecked.value = checked
-        _backgroundColor.value = if (checked) gray else blue
     }
 }
 
