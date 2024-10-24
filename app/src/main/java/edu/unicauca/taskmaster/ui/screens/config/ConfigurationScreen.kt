@@ -68,12 +68,6 @@ fun ConfigScreen(
             ) {
                 ConfigSection()
             }
-
-            NavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f)
-            )
         }
     }
 }

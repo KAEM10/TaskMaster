@@ -44,12 +44,6 @@ fun HistotialScreen(
             ) {
                 CalendarWithTasks()
             }
-
-            NavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f)
-            )
         }
     }
 }

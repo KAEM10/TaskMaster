@@ -2,6 +2,10 @@
     <string name="app_name">TaskMaster</string>
     <string name="back_button">Back</string>
     <string name="app_slogan" translatable="false">Gestiona tu Vida</string>
-    <string name="HomeScreenTitle">Tareas de hoy</string>
-    <string name="btn_guardar">GUARDAR</string>
+    <string name="HomeScreenTitle">Yours task</string>
+    <string name="btn_guardar">Save</string>
+    <string name="create_task">Create task</string>
+    <string name="name">Name</string>
+    <string name="calendar">Calendar</string>
+    <string name="settings">Settings</string>
 </resources>

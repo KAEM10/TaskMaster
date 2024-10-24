@@ -20,6 +20,10 @@ import edu.unicauca.taskmaster.R
 
 @Composable
 fun NavBar(
+    onHomeClicked: () -> Unit = {},
+    onAddClicked: () -> Unit = {},
+    onCalendarClicked: () -> Unit = {},
+    onSettingsClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     Row(
@@ -32,7 +36,7 @@ fun NavBar(
 
     ) {
         IconButton(
-            onClick = { },
+            onClick = { onHomeClicked() },
             modifier = Modifier.size(60.dp)
         ) {
             Icon(
@@ -43,7 +47,7 @@ fun NavBar(
             )
         }
         IconButton(
-            onClick = { },
+            onClick = { onAddClicked() },
             modifier = Modifier.size(60.dp)
         ) {
             Icon(
@@ -54,7 +58,7 @@ fun NavBar(
             )
         }
         IconButton(
-            onClick = {  },
+            onClick = { onCalendarClicked() },
             modifier = Modifier.size(60.dp)
         ) {
             Icon(
@@ -65,7 +69,7 @@ fun NavBar(
             )
         }
         IconButton(
-            onClick = {  },
+            onClick = { onSettingsClicked() },
             modifier = Modifier.size(60.dp)
         ) {
             Icon(
@@ -83,6 +87,11 @@ fun NavBar(
 
 fun HeaderPreview() {
     TaskMasterTheme {
-        NavBar()
+        NavBar(
+            onHomeClicked = {},
+            onAddClicked = {},
+            onCalendarClicked = {},
+            onSettingsClicked = {}
+        )
     }
 }

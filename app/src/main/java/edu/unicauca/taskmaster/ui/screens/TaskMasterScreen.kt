@@ -2,61 +2,39 @@ package edu.unicauca.taskmaster.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.unicauca.taskmaster.R
+import edu.unicauca.taskmaster.ui.screens.components.NavBar
+import edu.unicauca.taskmaster.ui.screens.config.ConfigScreen
+import edu.unicauca.taskmaster.ui.screens.create.CreateTaskViewModel
+import edu.unicauca.taskmaster.ui.screens.create.CreateTaskScreen
+import edu.unicauca.taskmaster.ui.screens.historial.HistotialScreen
+import edu.unicauca.taskmaster.ui.screens.home.HomeScreen
+import edu.unicauca.taskmaster.ui.screens.home.HomeViewModel
 
 
 enum class TaskMasterScreen(@StringRes val title: Int) {
-    Home(title = R.string.app_name)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TaskMasterAppBar(
-    currentScreen: TaskMasterScreen,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = { Text(stringResource(currentScreen.title)) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = modifier,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button)
-                    )
-                }
-            }
-        }
-    )
+    Home(title = R.string.app_name),
+    CreateTask(title = R.string.create_task),
+    Calendar(title = R.string.calendar),
+    Settings(title = R.string.settings)
 }
 
 @Composable
 fun TaskMasterApp(
-    //viewModel: OrderViewModel = viewModel(),
+    createTaskViewModel: CreateTaskViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -64,49 +42,72 @@ fun TaskMasterApp(
         backStackEntry?.destination?.route ?: TaskMasterScreen.Home.name
     )
     Scaffold(
-        topBar = {
-            TaskMasterAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+        bottomBar = {
+            NavBar(
+                onHomeClicked = {
+                    homeViewModel.getTask()
+                    navController.popBackStack(TaskMasterScreen.Home.name, inclusive = false)
+                },
+                onAddClicked = {
+                    navController.navigate(TaskMasterScreen.CreateTask.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onCalendarClicked = {
+                    navController.navigate(TaskMasterScreen.Calendar.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onSettingsClicked = {
+                    navController.navigate(TaskMasterScreen.Settings.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                }
             )
         }
 
     ) { innerPadding ->
-        //val uiState by viewModel.uiState.collectAsState()
+        val homeUiState by homeViewModel.uiState.collectAsState()
+        val createTaskUiState by createTaskViewModel.uiState.collectAsState()
 
         NavHost(
             navController = navController,
             startDestination = TaskMasterScreen.Home.name,
             modifier = Modifier.padding(innerPadding)
         ) {
-            /*
+
+            composable(route = TaskMasterScreen.CreateTask.name) {
+                val context = LocalContext.current  // Obtén el contexto local
+                CreateTaskScreen(
+                    habitName = createTaskUiState.taskName,
+                    onHabitNameChanged = { createTaskViewModel.onTaskNameChanged(it) },
+                    selectedDays = createTaskUiState.selectedDays,
+                    onDaySelected = { createTaskViewModel.onDaySelected(it) },
+                    reminderSelected = createTaskUiState.reminderType,
+                    onReminderSelected = { createTaskViewModel.onReminderSelected(it) },
+                    onSaveButtonClicked = { createTaskViewModel.onSaveButtonClicked(context) }
+                )
+            }
+
             composable(route = TaskMasterScreen.Home.name) {
                 HomeScreen(
-                    quantityOptions = DataSource.quantityOptions,
-                    onNextButtonClicked = {
-                        viewModel.setQuantity(it)
-                        navController.navigate(CupcakeScreen.Flavor.name) },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
+                    list = homeUiState.task,
                 )
             }
 
-
-            composable(route = CupcakeScreen.Flavor.name) {
-                val context = LocalContext.current
-                SelectOptionScreen(
-                    subtotal = uiState.price,
-                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Pickup.name) },
-                    onCancelButtonClicked = { cancelOrderAndNavigateToStart(viewModel, navController) },
-                    options = DataSource.flavors.map { id -> context.resources.getString(id) },
-                    onSelectionChanged = { viewModel.setFlavor(it) },
-                    modifier = Modifier.fillMaxHeight()
-                )
+            composable(route = TaskMasterScreen.Calendar.name) {
+                HistotialScreen()
             }
 
-             */
+            composable(route = TaskMasterScreen.Settings.name) {
+                ConfigScreen()
+            }
         }
     }
 }
